@@ -25,6 +25,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 import playlist.api.model.AddTrackRequest;
 import playlist.api.model.DeleteTrackRequest;
 import playlist.model.Playlist;
+import playlist.service.PageCounterStatisticsService;
 import playlist.service.PlaylistService;
 
 @Api(value = "/playlists", description = "Endpoint for playlists listing")
@@ -38,12 +39,17 @@ public class PlaylistEndpoint {
 
 	@Context
 	private UriInfo uriInfo;
+	
+	@Autowired
+	private PageCounterStatisticsService statistics;
 
 	@GET
 	@ApiOperation(value = "Lists user playlist names", notes = "Lists user playlist names", responseContainer = "array", response = String.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successful reading user playlists name"),
 			@ApiResponse(code = 500, message = "Internal server error") })
 	public Response readPlaylist(@PathParam("username") String username) {
+		statistics.incrementCounter("view_all_playlists");
+		
 		List<String> playlistNames = service.getUsersPlaylistNames(username);
 		return Response.ok(playlistNames).build();
 	}
@@ -81,6 +87,8 @@ public class PlaylistEndpoint {
 			@ApiResponse(code = 500, message = "Internal server error") })
 	public Response getPlaylist(@PathParam("username") String username,
 			@PathParam("playlistName") String playlistName) {
+		statistics.incrementCounter("view_playlist");
+		
 		Playlist playlist = service.findByUserAndPlaylistName(username, playlistName);
 		return Response.ok(playlist).build();
 	}

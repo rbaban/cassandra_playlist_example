@@ -43,5 +43,9 @@ public class CassandraArtistService implements ArtistService {
 
 		return artists;
 	}
+	
+	protected Session getSession() {
+		return template.getSession();
+	}
 
 }
