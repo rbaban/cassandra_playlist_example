@@ -13,7 +13,6 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
 
 import playlist.model.Track;
 import playlist.service.TrackService;
@@ -37,7 +36,7 @@ public class CassandraTrackService implements TrackService {
 
 		List<Track> tracks = new ArrayList<>();
 		for (Row row : results) {
-			tracks.add(createTrackFromRow(row));
+			tracks.add(createStarredTrackFromRow(row));
 		}
 
 		return tracks;
@@ -54,7 +53,7 @@ public class CassandraTrackService implements TrackService {
 
 		List<Track> tracks = new ArrayList<>();
 		for (Row row : results) {
-			tracks.add(createTrackFromRow(row));
+			tracks.add(createStarredTrackFromRow(row));
 		}
 
 		return tracks;
@@ -70,7 +69,7 @@ public class CassandraTrackService implements TrackService {
 		if (resultSet.isExhausted()) {
 			return null;
 		}
-		return createTrackFromRow(resultSet.one());
+		return createBaseTrackFromRow(resultSet.one());
 	}
 
 	@Override
@@ -138,7 +137,7 @@ public class CassandraTrackService implements TrackService {
 	}
 
 
-	private Track createTrackFromRow(Row row) {
+	private Track createStarredTrackFromRow(Row row) {
 		Track track = createBaseTrackFromRow(row);
 		track.setStarred(row.getBool("starred"));
 		return track;

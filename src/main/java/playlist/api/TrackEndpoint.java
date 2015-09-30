@@ -9,7 +9,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -23,6 +22,8 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
+import playlist.api.model.FilterByArtistRequest;
+import playlist.api.model.FilterByGenreRequest;
 import playlist.model.Track;
 import playlist.service.TrackService;
 
@@ -55,8 +56,8 @@ public class TrackEndpoint {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successful retrieval of artists by first letter", response = Track.class),
 			@ApiResponse(code = 500, message = "Internal server error") })
-	public Response findByArtistName(@QueryParam("artistName") String artistName) {
-		List<Track> tracks = service.listTrackByArtist(artistName);
+	public Response findByArtistName(FilterByArtistRequest request) {
+		List<Track> tracks = service.listTrackByArtist(request.getArtistName());
 		return Response.ok(tracks).build();
 	}
 
@@ -66,8 +67,8 @@ public class TrackEndpoint {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successful retrieval of artists by first letter", response = Track.class),
 			@ApiResponse(code = 500, message = "Internal server error") })
-	public Response findByGenre(@QueryParam("genre") String genre, @QueryParam("limit") int limit) {
-		List<Track> tracks = service.listTrackByGenre(genre, limit);
+	public Response findByGenre(FilterByGenreRequest request) {
+		List<Track> tracks = service.listTrackByGenre(request.getGenre(), request.getLimit());
 		return Response.ok(tracks).build();
 	}
 
